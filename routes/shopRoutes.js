@@ -23,7 +23,7 @@ router.post("/activation", activation);
 
 router.post("/loginShop", loginShop);
 
-router.get("/getSeller", loadSeller);
+router.get("/getSeller", isSeller, loadSeller);
 
 router.get("/logout", logoutShop);
 

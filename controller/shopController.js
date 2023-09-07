@@ -157,23 +157,24 @@ const loginShop = async (req, res, next) => {
     return next(new ErrorHandler(error.message, 500));
   }
 };
-
 const loadSeller = async (req, res, next) => {
   try {
-    // console.log(req.seller)
     const seller = await Shop.findById(req.seller.id);
 
     if (!seller) {
-      return next(new ErrorHandler("User doesn't exist!", 400));
+      return next(new ErrorHandler("Seller not found.", 404)); // Return a 404 Not Found error.
     }
+
     res.status(200).json({
       success: true,
       seller,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error); // Forward any unexpected errors to the error handling middleware.
   }
 };
+
+
 
 // LOG OUT HANDLER
 const logoutShop = async (req, res, next) => {
