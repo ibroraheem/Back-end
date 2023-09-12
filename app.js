@@ -27,9 +27,9 @@ app.use("/", express.static("uploads"));
 
 // Import routes
 const userRoutes = require("./routes/userRoutes");
-const shopRoutes = require("./routes/shopRoutes");
-const productRoutes = require("./routes/productRoutes");
-const eventRoutes = require("./routes/eventRoutes");
+const shopRoutes = require("./controller/Shop");
+const productRoutes = require("./controller/product");
+const eventRoutes = require("./controller/events");
 const couponCodeRoutes = require("./routes/couponCodeRoutes");
 const paymentRoutes = require("./controller/paymentController");
 const order = require("./controller/orderController");
