@@ -8,13 +8,40 @@ const Shop = require("../model/shop");
 const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { upload } = require("../multer");
+require('dotenv').config()
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET
-// })
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
+router.post("/upload-images",
+  catchAsyncError(async (req, res, next) => {
+    try {
+      if (!req.files) {
+        return res.status(400).send('No files were uploaded.');
+      }
+      let files = req.files.images;
+
+      if (!Array.isArray(files)) {
+        files = [files];
+      }
+      let imageUrls = [];
+      for (let file of files) {
+        try {
+          const result = await cloudinary.uploader.upload(file.tempFilePath);
+          imageUrls.push(result.url);
+        } catch (error) {
+          console.error("Error uploading to Cloudinary:", error);
+          return res.status(500).send('Failed to upload one or more images.');
+        }
+      }
+      res.send({ imageUrls });
+    } catch (error) {
+      console.log(error);
+    }
+  }))
 
 router.post(
   "/createProducts",
@@ -56,9 +83,7 @@ router.post(
         });
       }
     } catch (error) {
-      console.log(error);
-      // return next(new ErrorHandler(error, 400));
-      res.status(500).json(error)
+      return next(new ErrorHandler(error, 400));
     }
   })
 );

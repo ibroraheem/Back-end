@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
+const fileUpload = require('express-fileupload');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const ErrorHandler = require("./utils/ErrorHandler"); // Make sure this path is correct
@@ -13,6 +14,10 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // Middleware
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/'
+}));
 app.use(cookieParser());
 app.use(
   cors({
