@@ -11,50 +11,51 @@ const { upload } = require("../multer");
 
 router.post(
   "/createProducts",
-  upload.array("images", 5),
   catchAsyncError(async (req, res, next) => {
     try {
-      console.log('REQUEST :::: ', req.body.images)
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
 
       if (!shop) {
-        return next(new ErrorHandler("ShopId is invalid", 400));
+        return next(new ErrorHandler("shopId is invalid", 400));
       } else {
-        const files = req.body.images; // Use req.files to get the uploaded files
-        
-        if (!Array.isArray(req.body.images) || req.body.images.length === 0) {
-          console.log('FILESSS ::: ', req.body.images)
-          return next(
-            new ErrorHandler(
-              "No files uploaded or files format is incorrect",
-              400
-            )
-          );
+        let images = [];
+
+        if (typeof req.body.images === "string") {
+          images.push(req.body.images);
+        } else {
+          images.push(req.body.images);
         }
 
-        const imageUrls = files.map((file) => `${file.filename}`);
-        console.log(imageUrls);
+        const imagesLinks = [];
 
+        for (let i = 0; i < images.length; i++) {
+          const result = await cloudinary.v2.uploader.upload(images[i], {
+            folder: "products",
+          });
+
+          imagesLinks.push({
+            public_id: result.public_id,
+            url: result.secure_url,
+          });
+        }
         const productData = req.body;
-        productData.images = imageUrls;
+        productData.images = imagesLinks;
         productData.shop = shop;
 
-        // Create the product
+        // create product
         const product = await Product.create(productData);
 
         res.status(201).json({
           success: true,
           product,
         });
-
       }
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
   })
 );
-
 
 // get all products of a shop
 router.get(
@@ -72,7 +73,6 @@ router.get(
     }
   })
 );
-
 
 // delete product of a shop
 router.delete(
@@ -110,7 +110,6 @@ router.delete(
   })
 );
 
-
 // get all products
 router.get(
   "/getAllProducts",
@@ -127,7 +126,5 @@ router.get(
     }
   })
 );
-
-
 
 module.exports = router;
