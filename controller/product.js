@@ -14,15 +14,17 @@ router.post(
   upload.array("images", 5),
   catchAsyncError(async (req, res, next) => {
     try {
+      console.log('REQUEST :::: ', req.body.images)
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
 
       if (!shop) {
         return next(new ErrorHandler("ShopId is invalid", 400));
       } else {
-        const files = req.files; // Use req.files to get the uploaded files
-
-        if (!Array.isArray(files) || files.length === 0) {
+        const files = req.body.images; // Use req.files to get the uploaded files
+        
+        if (!Array.isArray(req.body.images) || req.body.images.length === 0) {
+          console.log('FILESSS ::: ', req.body.images)
           return next(
             new ErrorHandler(
               "No files uploaded or files format is incorrect",

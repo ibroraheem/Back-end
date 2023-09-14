@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const ErrorHandler = require("./utils/ErrorHandler"); // Make sure this path is correct
-
+const userHandler = require("./routes/userRoutes");
 // Config
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config({
@@ -21,6 +21,7 @@ app.use(
   })
 );
 
+app.use(userHandler);
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use("/", express.static("uploads"));

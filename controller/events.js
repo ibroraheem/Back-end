@@ -63,6 +63,7 @@ router.get("/getAllEvents", async (req, res, next) => {
   }
 });
 
+
 // get all events of a shop
 router.get(
   "/getAllEventShop/:id",
@@ -79,6 +80,7 @@ router.get(
     }
   })
 );
+
 
 router.delete(
   "/deleteShopEvent/:id",
