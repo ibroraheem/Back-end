@@ -9,18 +9,22 @@ const cloudinary = require("cloudinary");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { upload } = require("../multer");
 
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET
+// })
+
+
 router.post(
   "/createProducts",
   catchAsyncError(async (req, res, next) => {
     try {
-      const shopId = req.body.shopId;
-      const shop = await Shop.findById(shopId);
-
+      const shop = await Shop.findOne({ _id: req.body.shopId });
       if (!shop) {
         return next(new ErrorHandler("shopId is invalid", 400));
       } else {
         let images = [];
-
         if (typeof req.body.images === "string") {
           images.push(req.body.images);
         } else {
@@ -52,7 +56,9 @@ router.post(
         });
       }
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      console.log(error);
+      // return next(new ErrorHandler(error, 400));
+      res.status(500).json(error)
     }
   })
 );
@@ -126,5 +132,17 @@ router.get(
     }
   })
 );
+
+router.get("/getshops",
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const shop = await Shop.findOne({ id: req.body.id });
+      if (!shop) return next(new ErrorHandler("shopId is invalid", 400));
+      res.status(200).send(shop);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send(err)
+    }
+  }));
 
 module.exports = router;

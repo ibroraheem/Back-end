@@ -38,6 +38,9 @@ const conversation = require("./controller/conversationController");
 const message = require("./controller/messageController");
 
 // app.use("/api/v2/user", userRoutes); // Adjusted the route prefix
+app.get("/", (req, res) => {
+  res.status(200).send('Hello World')
+})
 app.use("/api/users", userRoutes);
 app.use("/api/shops", shopRoutes);
 app.use("/api/products", productRoutes);
